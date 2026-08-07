@@ -1,0 +1,3 @@
+deployment:
+  imageRepo: anuragbojja/user
+  imageVersion: v1 

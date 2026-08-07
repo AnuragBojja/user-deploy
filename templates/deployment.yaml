@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: user
+    namespace: roboshop-dev
+    labels:
+        project: roboshop
+        service: user
+        tier: backend
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            project: roboshop
+            service: user
+            tier: backend
+    template:
+        metadata:
+            labels:
+                project: roboshop
+                service: user
+                tier: backend
+        spec:
+            containers:
+                  - name: user
+                    image: "{{ .Values.deployment.imageRepo }}:{{ .Values.deployment.imageVersion }}"
+                    imagePullPolicy: Always
+                    envFrom:
+                      - configMapRef:
+                            name: user
+                    livenessProbe:
+                        httpGet:
+                            path: /health
+                            port: 8080
+                        initialDelaySeconds: 15
+                        periodSeconds: 10
+                    readinessProbe:
+                        httpGet:    
+                            path: /health
+                            port: 8080  
+                        initialDelaySeconds: 15
+                        failureThreshold: 2
+                        periodSeconds: 10
+                    resources:
+                        requests:
+                            memory: "128Mi"
+                            cpu: "250m"
+                        limits:
+                            memory: "256Mi"
+                            cpu: "350m"
+                    
